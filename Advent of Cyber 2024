@@ -1,0 +1,30 @@
+#Advent of Cyber 2024
+
+## Task 21 Day 15: Be it ever so heinous, there's no place like Domain Controller.
+
+Use the "Security" tab within Event Viewer to answer questions 1 and 2.
+On what day was Glitch_Malware last logged in?
+    07/11/2024
+    <QueryList>
+    <Query Id="0" Path="Security">
+        <Select Path="Security">
+        *[System[(EventID='4624')]
+        and
+        EventData[Data[@Name='TargetUserName']='Glitch_Malware']
+        ] 
+        </Select>
+    </Query>
+    </QueryList>
+
+What event ID shows the login of the Glitch_Malware user?
+    4624
+
+Read the PowerShell history of the Administrator account. What was the command that was used to enumerate Active Directory users?
+    Get-ADUser -Filter * -Properties MemberOf | Select-Object Name
+    C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history
+
+Look in the PowerShell log file located in Application and Services Logs -> Windows PowerShell. What was Glitch_Malware's set password? 
+    SuperSecretP@ssw0rd!
+
+Review the Group Policy Objects present on the machine. What is the name of the installed GPO?
+    Malicious GPO - Glitch_Malware Persistence
