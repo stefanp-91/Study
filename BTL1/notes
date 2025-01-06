@@ -1,0 +1,19 @@
+# Active Directory
+## Kerberos
+_Kerberos is a secure authentication system used in many organizations to ensure that users can access services like email, file servers, and databases without repeatedly entering their passwords. It operates using a system of encrypted tickets to prove a user's identity. Kerberos ensures that passwords aren't constantly sent across the network, meaning users can access multiple services after logging in once._
+
+1. When Sarah logs into her computer, her computer uses her password to send a request to the Key Distribution Center (KDC)’s Authentication Server (AS). This request asks for a Ticket Granting Ticket (TGT).
+2. The KDC’s Authentication Server checks Sarah’s credentials (username and password). If everything is correct, the AS responds by sending a Ticket Granting Ticket (TGT) back to Sarah’s computer. This TGT is encrypted and will be used for future requests.
+3. Later, when Sarah wants to access her email, her computer uses the TGT to request a service ticket from the Ticket Granting Server (TGS) (another component of the KDC). This request asks for permission to access the email service.
+4. The Ticket Granting Server verifies Sarah’s TGT and responds by sending her a Service Ticket specifically for the email server. This ticket allows Sarah to prove her identity to the email server.
+5. Sarah’s computer sends the Service Ticket to the email server (the application server) as proof of her identity and asks for access to her email account.
+6. The email server checks the Service Ticket, confirms it’s valid, and responds by granting Sarah access to her email. She can now read and send emails without entering her password again.
+
+## NTLM (NT LAN Manager)
+_NTLM (NT LAN Manager) is an older Windows authentication protocol that uses a challenge-response method to verify a user's identity without sending their password over the network. When a user tries to access a resource, the server sends a random challenge. The user's computer encrypts this challenge with a hashed version of their password and sends the response back to the server. The user is granted access if the response matches what the server expects.
+To help explain how NTLM works, let’s consider an example with John, who is using NTLM authentication to access a shared folder on his company’s internal server_
+
+1. John clicks on the shared folder from his computer. His computer sends a request to the server for access. Instead of sending his password directly, his computer sends a plain text version of his username to the server.
+2. The server received the request but needed to verify John’s identity. To do this, it sent a random number, called a challenge, back to John’s computer.
+3. John’s computer uses the password hash to encrypt the challenge and sends the result back to the server. This response proves to the server that John knows his password without actually revealing it.
+4. The server checks if John’s response is correct. If it is, the server grants him access to the shared folder, and John can open it. If the response is wrong, the server denies access, and John cannot access the folder.
