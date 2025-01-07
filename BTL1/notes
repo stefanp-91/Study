@@ -1,6 +1,6 @@
-# Active Directory
-## Kerberos
-_Kerberos is a secure authentication system used in many organizations to ensure that users can access services like email, file servers, and databases without repeatedly entering their passwords. It operates using a system of encrypted tickets to prove a user's identity. Kerberos ensures that passwords aren't constantly sent across the network, meaning users can access multiple services after logging in once._
+## Active Directory
+### Kerberos
+_Kerberos is a secure authentication system used in many organizations to ensure that users can access services like email, file servers, and databases without repeatedly entering their passwords. It operates using a system of encrypted tickets to prove a user's identity. Kerberos ensures that passwords aren't constantly sent across the network, meaning users can access multiple services after logging in once_
 
 1. When Sarah logs into her computer, her computer uses her password to send a request to the Key Distribution Center (KDC)’s Authentication Server (AS). This request asks for a Ticket Granting Ticket (TGT).
 2. The KDC’s Authentication Server checks Sarah’s credentials (username and password). If everything is correct, the AS responds by sending a Ticket Granting Ticket (TGT) back to Sarah’s computer. This TGT is encrypted and will be used for future requests.
@@ -9,11 +9,83 @@ _Kerberos is a secure authentication system used in many organizations to ensure
 5. Sarah’s computer sends the Service Ticket to the email server (the application server) as proof of her identity and asks for access to her email account.
 6. The email server checks the Service Ticket, confirms it’s valid, and responds by granting Sarah access to her email. She can now read and send emails without entering her password again.
 
-## NTLM (NT LAN Manager)
+### NTLM (NT LAN Manager)
 _NTLM (NT LAN Manager) is an older Windows authentication protocol that uses a challenge-response method to verify a user's identity without sending their password over the network. When a user tries to access a resource, the server sends a random challenge. The user's computer encrypts this challenge with a hashed version of their password and sends the response back to the server. The user is granted access if the response matches what the server expects.
-To help explain how NTLM works, let’s consider an example with John, who is using NTLM authentication to access a shared folder on his company’s internal server_
+To help explain how NTLM works, let’s consider an example with John, who is using NTLM authentication to access a shared folder on his company’s internal server._
 
 1. John clicks on the shared folder from his computer. His computer sends a request to the server for access. Instead of sending his password directly, his computer sends a plain text version of his username to the server.
 2. The server received the request but needed to verify John’s identity. To do this, it sent a random number, called a challenge, back to John’s computer.
 3. John’s computer uses the password hash to encrypt the challenge and sends the result back to the server. This response proves to the server that John knows his password without actually revealing it.
 4. The server checks if John’s response is correct. If it is, the server grants him access to the shared folder, and John can open it. If the response is wrong, the server denies access, and John cannot access the folder.
+
+### What Are APTs?
+APTs, or Advanced Persistent Threats, are one of the most feared security concerns in large organizations, institutions, or governments. APTs include a group of highly skilled attackers, who have a state backing or otherwise almost unrestricted access to a variety of resources. APTs deliver maximum, long-lasting damage and target specific organizations according to their motives. APTs typically use previously unseen malware and exploits (also known as 0-day exploits), with their own tailored software and frameworks to carry out the attacks.
+
+When you think of cyber warfare, you would most likely be thinking of APTs, their nation-state sponsors, and their extreme attacks against other countries, such as cyber espionage.
+
+## Tools, Techniques, Procedures
+Known as “Tools, Techniques and Procedures”, or “Tactics, Techniques, and Procedures”.
+
+TTPs are the actions that threat actors take when conducting cyber attacks. They’re used by defenders to track the tactics that different threat groups use, and let us gather intelligence to aid security operations teams. By understanding how malicious actors perform attacks, we can implement defenses to stop or slow them down.
+
+MITRE’s ATT&CK Framework has over 260 different techniques mapped and split into 12 different categories:
+
+- Initial Access
+- Execution
+- Persistence
+- Privilege Escalation
+- Defense Evasion
+- Credential Access
+- Discovery
+- Lateral Movement
+- Collection
+- Command and Control
+- Exfiltration
+- Impact
+
+## Precursors Explained
+_“Precursors” or “Threat Precursors” are elements of the incident identification and response process that allow both an attacker and a security researcher or professional to determine the existence of flaws and/or vulnerabilities within a system. By identifying precursors organizations can work to prevent cyber attacks before they occur._
+
+### Port Scanning, Operating System and Application Fingerprinting
+- Logs from firewalls or web application firewalls (WAFs) that have rules written to alert and log when one source IP is attempting to connect on X number of ports over a short period of time.
+- Logs from systems that are being scanned.
+
+### Social Engineering and Reconnaissance
+- Non-employees looking through the organization’s bins that are conducting ‘dumpster diving’.
+- Non-employees hanging around outside the office or lobby areas.
+- Employees being engaged with outside or near the office by unknown individuals.
+- Calls from unknown, withheld or spoofed phone numbers.
+- Documents or office equipment going missing.
+
+### OSINT Sources and Bulletin Boards
+- An email or online message from a threat group threatening or stating they will attack the organization.
+- Publicly disclosed vulnerabilities (CVEs) that affect systems or programs that are used by the organization.
+- Chatter on underground forums about a zero-day or new malware that is being exploited or utilized in the wild.
+- Reports stating an increase in vulnerability exploitation activity supplied by government organizations or intelligence vendors.
+
+## Indicators of Compromise Explained
+_Indicators of compromise are a core part of threat intelligence, and allow us to share information on threats in several different formats. This information is used to power intrusion detection and prevention systems, endpoint detection and response systems, firewalls, and other automated defenses. Human analysts can also use these to perform threat exposure checks against their environments to identify the early, or late, signs of a cyberattack._
+
+### Example of IOCs
+- Email Addresses
+- IP Addresses
+- Domain Names/URLs
+- FIle Hashes/File Names
+
+### IOC Formats
+_STIX (Structured Threat Information eXpression) and TAXII (Trusted Automated eXchange of Intelligence Information) are common methods of sharing threat intelligence, such as indicators of compromise. These values alone don’t mean a lot, but with STIX we can share information in a structured format, providing a lot more than just lists of IOCs._
+
+## MITRE ATT&CK Framework
+_MITRE’s Adversarial Tactics, Techniques, and Common Knowledge (ATT&CK) is a knowledge base and model for cyber adversary behavior, reflecting the various phases of an adversary’s attack lifecycle and the platforms they are known to target.  Since it was introduced in 2013, it has become one of the most respected and referenced resources for cyber security professionals. This model consists of tactics, techniques, and procedures and contains exhaustive information about types of attacks and their corresponding behavior. The primary use case of ATT&CK is for identifying the behavior of APTs and it explores the various ways that these APTs can compromise a computer and/or network._
+
+## Lockheed Martin Cyber Kill Chain
+_The Cyber Kill Chain (CKC) framework was developed by Lockheed Martin in 2011 and it is an Intelligence Defense model for the identification and prevention of cyber-attacks, specifically ones that can be classified as Advanced Persistent Threats (APTs).  The CKC can help IT security teams and professionals develop strategies, products, and plans to detect and contain attacks at different stages, resulting in a more secure IT environment.  In recent years, it has become the de facto standard to describe how attacks can happen on a network.  The CKC is split into seven different stages, with all seven stages needing to be completed to have a successful attack._
+
+## Pyramid of Pain
+_The pyramid of pain is a visual representation of the amount of pain we can cause a malicious actor in denying them certain indicators, working to disrupt their operations. Starting at the bottom are the easiest indicators that an actor can change (remember, we can change the hash of a malicious file by editing a single character! This can circumvent hash-based blocks in security tooling), and at the top is the hardest indicator to change, forcing adversaries to change their entire operations by understanding and defending against the techniques they use in attacks._
+
+## Threat Intelligence Platforms
+_Threat Intelligence Platforms can be deployed as Software-as-a-Service or an on-premises solution to effectively manage a large volume of cyber threat intelligence, such as; actors, campaigns, signatures, bulletins, and Tools, Techniques, and Procedures (TTPs). TIPs are designed to provide the following functionality for security teams:_
+- Aggregation and normalization of intelligence collected from multiple sources.
+- Integrate with existing security controls such as firewalls and intrusion prevention systems.
+- Analysis and sharing of threat intelligence.
