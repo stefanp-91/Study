@@ -89,3 +89,93 @@ _Threat Intelligence Platforms can be deployed as Software-as-a-Service or an on
 - Aggregation and normalization of intelligence collected from multiple sources.
 - Integrate with existing security controls such as firewalls and intrusion prevention systems.
 - Analysis and sharing of threat intelligence.
+
+## Malware Information Sharing Platform (MISP)
+_The Malware Information Sharing Platform (MISP) is an open-source software solution created by a community of volunteers for collecting, storing, distributing, and sharing cyber security indicators and threats about cyber security incidents analysis and malware analysis. MISP is designed by and for incident analysts, security and ICT professionals or malware reversers to support their day-to-day operations to share structured information efficiently._
+
+## Digital Forensics Process
+1. Identification – The first stage identifies potential sources of relevant evidence or information (devices), as well as key custodians and location of data.
+2. Preservation – The process of preserving relevant electronically stored information (ESI). This is done by protecting the crime or incident scene, capturing visual images of the scene, and documenting all relevant information about the evidence and how it was acquired.
+3. Collection – Collecting digital information that may be relevant to the investigation. Collection may involve removing the electronic device(s) from the crime or incident scene and then imaging, copying or printing out its (their) content.
+4. Analysis – An in-depth systematic search of evidence relating to the incident being investigated. The outputs of the examination are data objects found in the collected information. These outputs may include system and user-generated files. The analysis aims to draw conclusions based on the evidence found.
+5. Reporting – Reports are based on proven techniques and methodology and other competent forensic examiners should be able to duplicate and reproduce the same results.
+
+## Windows Artifacts - Logon Events
+- ID 4624 (Successful Logon)
+- ID 4672 (Special Logon)
+- ID 4625 (Failed Logon)
+- ID 4634 (Logoff)
+
+### Artifact Analysis, 4624 Successful Logon
+One of the most important properties for us to note is the Logon Type, where there are 8 possible values:
+
+2 – Interactive (interactively logged on, meaning a physical logon to the device)
+3 – Network (accessed system via network)
+4 – Batch (started as an automated batch job)
+5 – Service (a Windows service started by service controller)
+6 – Proxy (proxy logon; not used in Windows NT or Windows 2000)
+7 – Unlock (unlock workstation - think Interactive logon, but unlocking to resume a previous session)
+8 – NetworkCleartext (network logon with cleartext credentials)
+9 – NewCredentials (used by RunAs when the /netonly option is used)
+
+### Artifact Analysis, 4625 Failed Logon
+Failed Logon events are very useful for us, especially when dealing with incident response. This is because these logs contain error codes, which help us to understand exactly why the logon attempt failed. The different error codes are:
+
+NETLOGON LOG ERROR CODE	DESCRIPTION
+0xC0000064	The specified user does not exist
+0xC000006A	The value provided as the current password is not correct
+0xC000006C	Password policy not met
+0xC000006D	The attempted logon is invalid due to a bad user name
+0xC000006E	User account restriction has prevented successful login
+0xC000006F	The user account has time restrictions and may not be logged onto at this time
+0xC0000070	The user is restricted and may not log on from the source workstation
+0xC0000071	The user account’s password has expired
+0xC0000072	The user account is currently disabled
+0xC000009A	Insufficient system resources
+0xC0000193	The user’s account has expired
+0xC0000224	User must change his password before he logs on the first time
+0xC0000234	The user account has been automatically locked
+ 
+A high volume of attempted logins to a disable account (0xc00000072)? Suspicious.
+A high volume of attempted logins to an account that doesn't exist (bad username, 0xC0000006D)? Suspicious. While most SOCs will use this log and the error codes within to generate alerts, there's definitely value for us as forensic investigators.
+
+## Windows Artifacts - Recycle Bin
+Artifact Location
+On Windows 10, we can find the Recycle Bin directory for all users located at C:\$Recycle.Bin
+If the user has emptied the Recycle Bin, we lose this artifact and cannot analyze it.
+
+Technical Analysis
+1. So, we know the directory for the Reycle Bin is (by default) C:\$Recycle.Bin. We need to use dir /a as the folders are hidden by default, and the /a flag will show these.
+2. We can see that there are sub-folders using account security identifiers as the name (SIDs). It's easy to find out what username the SID relates to  using Windows Management Instrumentation Command (WMIC): wmic useraccount get name,SID
+3. Imagine we're investigating the account Simon.Leeves to verify claims he has intentionally deleted critical company files. We know his SID ends in "1010". We'll move into the folder associated with his account's SID (we can use the [Tab] key to auto-fill and go through the directories for us, so we don't need to type it out!). Using dir /a again, we can list all of the hidden contents.
+- Files that begin with “$R” followed by a random string contain the true file contents of the recycled file.
+- Files that begin with “$I” and end in the same string as the “$R” file counterpart contain the metadata for that specific file, such as the original filename, path, size, and timestamp of when the file was deleted.
+
+CLI for Single File
+_C:\Users\BTLOTest\Desktop\Recycle-Bin-Analysis\Tools\RBCmd.exe -f $I1UOZ51.xlsx_
+Output all to CSV
+_C:\Users\BTLOTest\Desktop\Recycle-Bin-Analysis\Tools\RBCmd.exe -d . --csv "C:\Users\BTLOTest\Desktop\RBCmdOutput"_
+
+## Linux Artifacts: Passwd and Shadow
+/etc/passwd = The /etc/passwd file stores user account information such as the username, user ID, group ID, home directory, and login shell. 
+/etc/shadow = Encrypted Passwords
+
+## Linux Artifacts: /Var/Lib and /Var/Log
+
+### var/lib
+On Debian-based systems, we can find a very useful file at the following location: /var/lib/dpkg/status. This file includes a list of all installed software packages, and can be a gold mine if you’re looking to see what programs the user has installed to the system. 
+
+We could open the file in a terminal, take every line that contains ‘Package’ (as we know this holds the package name), and save this to a text file so we can look at it without the noise of all the extra package details. The command for this would be:
+
+_cat status | grep Package > packages.txt_
+- cat status will read the file.
+- grep Package will search for any lines containing ‘Package’
+- > packages.txt will output the results to a text file called packages.txt
+
+### var/log
+- /var/log/auth.log – Contains system authentication information, including user logins.
+- /var/log/dpkg.log – Contains information that is logged when a package is installed or removed using the ‘dpkg’ command. This is similar to the packages command from the var/lib section above.
+- /var/log/btmp – This file contains information about failed login attempts.
+- /var/log/cron – Whenever the cron daemon starts a cron job, it logs the information about the cron job in this file. This is useful because cron jobs can be abused for persistence on a system.
+- /var/log/secure – Contains information related to authentication and authorization privileges. For example, sshd (the daemon used for the SSH service) logs all the messages here, including unsuccessful login attempts.
+- /var/log/faillog – Contains user failed login attempts.
